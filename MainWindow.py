@@ -29,8 +29,31 @@ class MainWindow(QMainWindow):
 
         self.findButton.clicked.connect(self.getMapFromCoordinates)
 
+        self.z = 4
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_PageUp:
+            print('z in')
+            self.zoom_in()
+        elif event.key() == Qt.Key_PageDown:
+            self.zoom_out()
+            print('z out')
+
+    def zoom_in(self):
+        self.z += 1
+        if self.z > 19:
+            self.z = 19
+        self.getMapFromCoordinates()
+
+    def zoom_out(self):
+        self.z -= 1
+        if self.z < 1:
+            self.z = 1
+        self.getMapFromCoordinates()
+
     def getMapFromCoordinates(self):
+        print(self.z)
         coords = self.coordsInput.text()
         self.pixmap.loadFromData(requests.get(
-            f'https://static-maps.yandex.ru/1.x/?ll={coords}&z=4&l=sat').content)
+            f'https://static-maps.yandex.ru/1.x/?ll={coords}&z={self.z}&l=sat').content)
         self.map.setPixmap(self.pixmap)
