@@ -33,11 +33,9 @@ class MainWindow(QMainWindow):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
-            print('z in')
             self.zoom_in()
         elif event.key() == Qt.Key_PageDown:
             self.zoom_out()
-            print('z out')
 
     def zoom_in(self):
         self.z += 1
@@ -52,7 +50,6 @@ class MainWindow(QMainWindow):
         self.getMapFromCoordinates()
 
     def getMapFromCoordinates(self):
-        print(self.z)
         coords = self.coordsInput.text()
         self.pixmap.loadFromData(requests.get(
             f'https://static-maps.yandex.ru/1.x/?ll={coords}&z={self.z}&l=sat').content)
