@@ -27,30 +27,49 @@ class MainWindow(QMainWindow):
 
         self.pixmap = QPixmap()
 
-        self.findButton.clicked.connect(self.getMapFromCoordinates)
+        self.findButton.clicked.connect(self.find)
 
-        self.z = 4
+        self.long_size = 0.016457
+        self.lat_size = 0.00619
+
+    def find(self):
+        self.coords = self.coordsInput.text()
+        self.getMapFromCoordinates()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
             self.zoom_in()
         elif event.key() == Qt.Key_PageDown:
             self.zoom_out()
+        elif event.key() == Qt.Key_Left:
+            self.move_(-1, 0)
+        elif event.key() == Qt.Key_Right:
+            self.move_(1, 0)
+        elif event.key() == Qt.Key_Up:
+            self.move_(0, 1)
+        elif event.key() == Qt.Key_Down:
+            self.move_(0, -1)
 
     def zoom_in(self):
-        self.z += 1
-        if self.z > 19:
-            self.z = 19
+        self.long_size *= 0.666666
+        self.lat_size *= 0.666666
         self.getMapFromCoordinates()
 
     def zoom_out(self):
-        self.z -= 1
-        if self.z < 1:
-            self.z = 1
+        self.long_size *= 1.5
+        self.lat_size *= 1.5
+        self.getMapFromCoordinates()
+
+    def move_(self, dx, dy):
+        x, y = list(map(float, self.coords.split(',')))
+        x += self.long_size * 0.5 * dx
+        y += self.lat_size * 0.5 * dy
+        x = "{0:.6f}".format(x)
+        y = "{0:.6f}".format(y)
+        self.coords = str(x) + ',' + str(y)
         self.getMapFromCoordinates()
 
     def getMapFromCoordinates(self):
-        coords = self.coordsInput.text()
         self.pixmap.loadFromData(requests.get(
-            f'https://static-maps.yandex.ru/1.x/?ll={coords}&z={self.z}&l=sat&size=650,400').content)
+            f'https://static-maps.yandex.ru/1.x/?ll={self.coords}&spn={self.long_size},{self.lat_size}&l=sat').content)
         self.map.setPixmap(self.pixmap)
