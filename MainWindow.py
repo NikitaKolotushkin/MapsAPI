@@ -52,5 +52,5 @@ class MainWindow(QMainWindow):
     def getMapFromCoordinates(self):
         coords = self.coordsInput.text()
         self.pixmap.loadFromData(requests.get(
-            f'https://static-maps.yandex.ru/1.x/?ll={coords}&z={self.z}&l=sat').content)
+            f'https://static-maps.yandex.ru/1.x/?ll={coords}&z={self.z}&l=sat&size=650,400').content)
         self.map.setPixmap(self.pixmap)
