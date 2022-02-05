@@ -27,7 +27,10 @@ class MainWindow(QMainWindow):
 
         self.pixmap = QPixmap()
 
+        self.map_types = {'Схема': 'map', 'Спутник': 'sat', 'Гибрид': 'sat,skl'}
+
         self.findButton.clicked.connect(self.find)
+        self.mapTypeBox.currentTextChanged.connect(self.getMapFromCoordinates)
 
         self.long_size = 0.016457
         self.lat_size = 0.00619
@@ -38,8 +41,10 @@ class MainWindow(QMainWindow):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
+            print('zoom in')
             self.zoom_in()
         elif event.key() == Qt.Key_PageDown:
+            print('zoom out')
             self.zoom_out()
         elif event.key() == Qt.Key_Left:
             self.move_(-1, 0)
@@ -70,6 +75,9 @@ class MainWindow(QMainWindow):
         self.getMapFromCoordinates()
 
     def getMapFromCoordinates(self):
+        self.map_type = self.mapTypeBox.currentText()
+        self.map_type = self.map_types[self.map_type]
         self.pixmap.loadFromData(requests.get(
-            f'https://static-maps.yandex.ru/1.x/?ll={self.coords}&spn={self.long_size},{self.lat_size}&l=sat').content)
+            f'https://static-maps.yandex.ru/1.x/?ll={self.coords}&spn={self.long_size},{self.lat_size}&l={self.map_type}').content)
         self.map.setPixmap(self.pixmap)
+
